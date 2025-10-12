@@ -1,12 +1,59 @@
-# Python
-venv/
+# ======================
+# Python / Backend
+# ======================
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+*$py.class
 
-# Node
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Env files (store your secrets like API keys here)
+.env
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Logs
+*.log
+
+# Coverage reports
+htmlcov/
+.coverage
+
+# ======================
+# VS Code
+# ======================
+.vscode/
+
+# ======================
+# Node / Frontend
+# ======================
+# Node modules
 frontend/node_modules/
 
-# System
-.DS_Store
+# Build / production
+frontend/build/
+frontend/dist/
 
-# Environment variables
-backend/.env
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ======================
+# Database / local files
+# ======================
+*.db
+*.sqlite3
+*.sql
+
+# ======================
+# Misc
+# ======================
+.DS_Store
+Thumbs.db
