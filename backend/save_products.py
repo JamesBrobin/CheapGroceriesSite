@@ -25,6 +25,8 @@ def save_products_to_db(products):
         brand = item["brand"]
         upc = item["upc"]
         price_data = item.get("items", [{}])[0].get("price", {})
+        print(name)
+        print(price_data)
         price = price_data.get("regular")
         currency = "USD"
 
@@ -41,5 +43,5 @@ def save_products_to_db(products):
 
 if __name__ == "__main__":
     token = get_access_token()
-    products = search_products("milk", token)
+    products = search_products("mac and cheese", token)
     save_products_to_db(products)

@@ -12,6 +12,16 @@ DB_HOST = os.getenv("DB_HOST")
 
 app = FastAPI()
 
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allow all for now
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/")
 def read_root():
     return {"message": "Hello, world!"}
@@ -29,11 +39,20 @@ def get_products():
             host=DB_HOST
         ) as conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT name, brand, price FROM products LIMIT 10;")
+                cur.execute("""
+                        SELECT name, brand, price, calories_per_package, calories_per_dollar
+                        FROM products
+                        LIMIT 10;
+                    """) 
                 rows = cur.fetchall()
                 return [
-                    {"name": r[0], "brand": r[1], "price": float(r[2]) if r[2] else None} 
-                    for r in rows
-                ]
+                            {
+                                "name": r[0],
+                                "brand": r[1],
+                                "price": float(r[2]) if r[2] else None,
+                                "calories_per_package": float(r[3]) if r[3] else None,
+                                "calories_per_dollar": float(r[4]) if r[4] else None
+                            } for r in rows
+                        ]
     except OperationalError as e:
         return {"error": "Database connection failed", "details": str(e)}

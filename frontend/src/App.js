@@ -1,23 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 function App() {
+  const [products, setProducts] = useState([]);
+  const [sortField, setSortField] = useState("calories_per_dollar");
+
+  useEffect(() => {
+    axios.get("http://127.0.0.1:8000/products")
+      .then(res => setProducts(res.data))
+      .catch(err => console.error(err));
+  }, []);
+
+  // Sort products by selected field (descending)
+  const sortedProducts = [...products].sort((a, b) => (b[sortField] || 0) - (a[sortField] || 0));
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: "20px" }}>
+      <h1>King Soopers: Calories per Dollar</h1>
+
+      <label>
+        Sort by: 
+        <select value={sortField} onChange={e => setSortField(e.target.value)}>
+          <option value="calories_per_dollar">Calories / $</option>
+          <option value="calories_per_package">Calories</option>
+          <option value="price">Price</option>
+        </select>
+      </label>
+
+      <table border="1" cellPadding="5" style={{ marginTop: "20px", width: "100%" }}>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Price ($)</th>
+            <th>Calories</th>
+            <th>Calories / $</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedProducts.map((p, idx) => (
+            <tr key={idx}>
+              <td>{p.name}</td>
+              <td>{p.brand}</td>
+              <td>{p.price?.toFixed(2) || "N/A"}</td>
+              <td>{p.calories_per_package?.toFixed(0) || "N/A"}</td>
+              <td>{p.calories_per_dollar?.toFixed(0) || "N/A"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
