@@ -40,7 +40,7 @@ def get_products():
         ) as conn:
             with conn.cursor() as cur:
                 cur.execute("""
-                        SELECT name, brand, price, calories_per_package, calories_per_dollar
+                        SELECT name, brand, price, size, calories_per_package, calories_per_dollar
                         FROM products;
                     """) 
                 rows = cur.fetchall()
@@ -49,8 +49,9 @@ def get_products():
                                 "name": r[0],
                                 "brand": r[1],
                                 "price": float(r[2]) if r[2] else None,
-                                "calories_per_package": float(r[3]) if r[3] else None,
-                                "calories_per_dollar": float(r[4]) if r[4] else None
+                                "size": r[3],
+                                "calories_per_package": float(r[4]) if r[4] else None,
+                                "calories_per_dollar": float(r[5]) if r[5] else None
                             } for r in rows
                         ]
     except OperationalError as e:

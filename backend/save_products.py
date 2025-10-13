@@ -38,30 +38,28 @@ def save_products_to_db(products):
 
         cur.execute("""
             INSERT INTO products (
-                upc, name, brand, price, currency, size, calories_per_package, calories_per_dollar
+                upc, name, brand, price, currency, size
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s)
             ON CONFLICT (upc) DO UPDATE SET
+                upc = EXCLUDED.upc,
                 name = EXCLUDED.name,
                 brand = EXCLUDED.brand,
                 price = EXCLUDED.price,
                 currency = EXCLUDED.currency,
-                size = EXCLUDED.size,
-                calories_per_package = EXCLUDED.calories_per_package,
-                calories_per_dollar = EXCLUDED.calories_per_dollar;
+                size = EXCLUDED.size
         """, (
             upc,
             name,
             brand,
             price,
             currency,
-            size,
-            None,
-            None
+            size
         ))
 
     
     print("Number of products returned:", len(products.get("data", [])))
+    pprint.pprint(products)
 
     conn.commit()
     cur.close()
@@ -69,5 +67,5 @@ def save_products_to_db(products):
 
 if __name__ == "__main__":
     token = get_access_token()
-    products = search_products("mac and cheese", token)
+    products = search_products("dried black beans", token)
     save_products_to_db(products)

@@ -7,9 +7,10 @@ import json
 load_dotenv()
 openai.api_key = os.getenv("OPEN_ROUTER_API_KEY")
 
-def estimate_calories_from_ai(product_name):
+def estimate_calories_from_ai(product_name, size):
     prompt = f"""
     You are a nutrition assistant. Estimate the total calories in this product: "{product_name}".
+    It's size is: "{size}".
     Return only a number.
     """
 

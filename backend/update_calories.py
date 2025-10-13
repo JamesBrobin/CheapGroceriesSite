@@ -3,6 +3,7 @@ from estimate_calories_from_ai import estimate_calories_from_ai
 import os
 import psycopg2
 from dotenv import load_dotenv
+import upc_database_api  # Add this import to fix the undefined error
 
 load_dotenv()
 
@@ -20,30 +21,44 @@ def update_product_calories():
     )
     cur = conn.cursor()
 
-    cur.execute("SELECT id, name, price FROM products WHERE calories_per_package IS NULL")
+    cur.execute("SELECT id, upc, name, price, size FROM products WHERE calories_per_package IS NULL")
 
     products = cur.fetchall()
     
-    for prod_id, name, price in products:
+    for prod_id, upc, name, price, size in products:
 
-        calories_per_package = estimate_calories_from_ai(name)
+        #calories_per_package = estimate_calories_from_ai(name, size)
 
-        try:
-            price_float = float(price) if price is not None else None
-        except ValueError:
-            continue
+        calories_per_package = upc_database_api.get_calories_from_upc(upc)
 
-    
-        calories_per_dollar = calories_per_package / price_float if price_float else None
-        
+        print(calories_per_package)
+
+        price_float = float(price) if price is not None else None
+
+        # Convert to float safely
+        if calories_per_package is not None:
+            calories_per_package = float(calories_per_package)
+        else:
+            calories_per_package = None
+
+        # Then divide
+        if calories_per_package and price_float:
+            calories_per_dollar = calories_per_package / price_float
+        else:
+            calories_per_dollar = None
+
+        print(calories_per_dollar)
+                    
         cur.execute("""
             UPDATE products
-            SET calories_per_serving=%s,
-                servings_per_package=%s,
-                calories_per_package=%s,
-                calories_per_dollar=%s
-            WHERE id=%s
-        """, ("0", "0", calories_per_package, calories_per_dollar, prod_id))
+            SET calories_per_package=%s,
+                calories_per_dollar=%s,
+                ai_estimate=%s
+                WHERE id=%s
+        """, (calories_per_package, calories_per_dollar, "TRUE" if calories_per_package is not None else "FALSE", prod_id))
+
+        
+        
     
     conn.commit()
     cur.close()
