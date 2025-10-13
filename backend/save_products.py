@@ -59,7 +59,6 @@ def save_products_to_db(products):
 
     
     print("Number of products returned:", len(products.get("data", [])))
-    pprint.pprint(products)
 
     conn.commit()
     cur.close()

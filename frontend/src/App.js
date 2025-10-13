@@ -19,7 +19,7 @@ function App() {
       <h1>King Soopers: Calories per Dollar</h1>
 
       <label>
-        Sort by: 
+        Sort by:{" "}
         <select value={sortField} onChange={e => setSortField(e.target.value)}>
           <option value="calories_per_dollar">Calories / $</option>
           <option value="calories_per_package">Calories</option>
@@ -32,19 +32,23 @@ function App() {
           <tr>
             <th>Name</th>
             <th>Brand</th>
+            <th>Size</th>
             <th>Price ($)</th>
             <th>Calories</th>
             <th>Calories / $</th>
+            <th>AI Estimate?</th>
           </tr>
         </thead>
         <tbody>
           {sortedProducts.map((p, idx) => (
             <tr key={idx}>
               <td>{p.name}</td>
-              <td>{p.brand}</td>
+              <td>{p.brand || "—"}</td>
+              <td>{p.size || "—"}</td>
               <td>{p.price?.toFixed(2) || "N/A"}</td>
               <td>{p.calories_per_package?.toFixed(0) || "N/A"}</td>
               <td>{p.calories_per_dollar?.toFixed(0) || "N/A"}</td>
+              <td>{p.ai_estimate ? "✅ Yes" : "❌ No"}</td>
             </tr>
           ))}
         </tbody>

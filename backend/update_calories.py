@@ -30,7 +30,7 @@ def update_product_calories():
         #calories_per_package = estimate_calories_from_ai(name, size)
 
         calories_per_package = upc_database_api.get_calories_from_upc(upc)
-
+        
         print(calories_per_package)
 
         price_float = float(price) if price is not None else None
