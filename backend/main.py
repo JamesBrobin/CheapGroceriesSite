@@ -41,8 +41,7 @@ def get_products():
             with conn.cursor() as cur:
                 cur.execute("""
                         SELECT name, brand, price, calories_per_package, calories_per_dollar
-                        FROM products
-                        LIMIT 10;
+                        FROM products;
                     """) 
                 rows = cur.fetchall()
                 return [

@@ -2,6 +2,7 @@ import psycopg2
 from kroger_api import get_access_token, search_products
 from dotenv import load_dotenv
 import os
+import requests
 
 load_dotenv()
 
@@ -43,5 +44,5 @@ def save_products_to_db(products):
 
 if __name__ == "__main__":
     token = get_access_token()
-    products = search_products("mac and cheese", token)
+    products = search_products("dried black beans", token)
     save_products_to_db(products)

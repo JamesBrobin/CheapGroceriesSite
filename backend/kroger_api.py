@@ -27,7 +27,6 @@ def search_products(query, token, limit=5):
     return response.json()
 
 if __name__ == "__main__":
-    #print(get_access_token())
     token = get_access_token()
     products = search_products("milk", token)
     print(products)
