@@ -2,7 +2,7 @@ import psycopg2
 from kroger_api import get_access_token, search_products
 from dotenv import load_dotenv
 import os
-import requests
+import json
 
 load_dotenv()
 
@@ -26,15 +26,40 @@ def save_products_to_db(products):
         brand = item["brand"]
         upc = item["upc"]
         price_data = item.get("items", [{}])[0].get("price", {})
-        print(name)
-        print(price_data)
         price = price_data.get("regular")
+        size = item.get("items", [{}])[0].get("size")
         currency = "USD"
 
-        cur.execute(
-            "INSERT INTO products (name, brand, upc, price, currency) VALUES (%s, %s, %s, %s, %s)",
-            (name, brand, upc, price, currency)
-        )
+        print(name)
+        print(price)
+        print(size)
+
+        print(json.dumps(item, indent=2))
+
+        cur.execute("""
+            INSERT INTO products (
+                upc, name, brand, price, currency, size, calories_per_package, calories_per_dollar
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (upc) DO UPDATE SET
+                name = EXCLUDED.name,
+                brand = EXCLUDED.brand,
+                price = EXCLUDED.price,
+                currency = EXCLUDED.currency,
+                size = EXCLUDED.size,
+                calories_per_package = EXCLUDED.calories_per_package,
+                calories_per_dollar = EXCLUDED.calories_per_dollar;
+        """, (
+            upc,
+            name,
+            brand,
+            price,
+            currency,
+            size,
+            None,
+            None
+        ))
+
     
     print("Number of products returned:", len(products.get("data", [])))
 
@@ -44,5 +69,5 @@ def save_products_to_db(products):
 
 if __name__ == "__main__":
     token = get_access_token()
-    products = search_products("dried black beans", token)
+    products = search_products("mac and cheese", token)
     save_products_to_db(products)

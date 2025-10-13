@@ -19,7 +19,7 @@ def get_access_token():
     token = response.json()["access_token"]
     return token
 
-def search_products(query, token, limit=5):
+def search_products(query, token, limit=10):
     url = f"https://api.kroger.com/v1/products?filter.term={query}&filter.limit={limit}&filter.locationId=01400943"
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.get(url, headers=headers)
@@ -28,6 +28,6 @@ def search_products(query, token, limit=5):
 
 if __name__ == "__main__":
     token = get_access_token()
-    products = search_products("milk", token)
+    products = search_products("beans", token)
     print(products)
 
