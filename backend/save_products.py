@@ -27,18 +27,18 @@ def save_products_to_db(products):
         upc = item["upc"]
         price_data = item.get("items", [{}])[0].get("price", {})
         price = price_data.get("regular")
-        size = item.get("items", [{}])[0].get("size")
+        size_from_kroger = item.get("items", [{}])[0].get("size")
         currency = "USD"
 
         print(name)
         print(price)
-        print(size)
+        print(size_from_kroger)
 
         print(json.dumps(item, indent=2))
 
         cur.execute("""
             INSERT INTO products (
-                upc, name, brand, price, currency, size
+                upc, name, brand, price, currency, size_from_kroger
             )
             VALUES (%s, %s, %s, %s, %s, %s)
             ON CONFLICT (upc) DO UPDATE SET
@@ -47,14 +47,14 @@ def save_products_to_db(products):
                 brand = EXCLUDED.brand,
                 price = EXCLUDED.price,
                 currency = EXCLUDED.currency,
-                size = EXCLUDED.size
+                size_from_kroger = EXCLUDED.size_from_kroger
         """, (
             upc,
             name,
             brand,
             price,
             currency,
-            size
+            size_from_kroger
         ))
 
     
