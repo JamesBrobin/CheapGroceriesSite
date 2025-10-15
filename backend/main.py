@@ -2,7 +2,10 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 import os
 import psycopg2
+from psycopg2 import OperationalError
+from fastapi.middleware.cors import CORSMiddleware
 
+# Load environment variables
 load_dotenv()
 
 DB_NAME = os.getenv("DB_NAME")
@@ -12,8 +15,7 @@ DB_HOST = os.getenv("DB_HOST")
 
 app = FastAPI()
 
-from fastapi.middleware.cors import CORSMiddleware
-
+# Allow frontend access (CORS)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # allow all for now
@@ -27,8 +29,6 @@ def read_root():
     return {"message": "Hello, world!"}
 
 
-from psycopg2 import OperationalError
-
 @app.get("/products")
 def get_products():
     try:
@@ -40,19 +40,39 @@ def get_products():
         ) as conn:
             with conn.cursor() as cur:
                 cur.execute("""
-                        SELECT name, brand, price, size, calories_per_package, calories_per_dollar
-                        FROM products;
-                    """) 
+                    SELECT
+                        upc,
+                        name,
+                        usda_description,
+                        brand,
+                        price,
+                        currency,
+                        size_from_kroger,
+                        size_in_grams,
+                        calories_per_package,
+                        calories_per_100_grams,
+                        calories_per_dollar,
+                        ai_estimate
+                    FROM products
+                    ORDER BY calories_per_dollar DESC NULLS LAST;
+                """)
                 rows = cur.fetchall()
                 return [
-                            {
-                                "name": r[0],
-                                "brand": r[1],
-                                "price": float(r[2]) if r[2] else None,
-                                "size": r[3],
-                                "calories_per_package": float(r[4]) if r[4] else None,
-                                "calories_per_dollar": float(r[5]) if r[5] else None
-                            } for r in rows
-                        ]
+                    {
+                        "upc": r[0],
+                        "name": r[1],
+                        "usda_description": r[2],
+                        "brand": r[3],
+                        "price": float(r[4]) if r[4] is not None else None,
+                        "currency": r[5],
+                        "size_from_kroger": r[6],
+                        "size_in_grams": float(r[7]) if r[7] is not None else None,
+                        "calories_per_package": float(r[8]) if r[8] is not None else None,
+                        "calories_per_100_grams": float(r[9]) if r[9] is not None else None,
+                        "calories_per_dollar": float(r[10]) if r[10] is not None else None,
+                        "ai_estimate": bool(r[11]) if r[11] is not None else False
+                    }
+                    for r in rows
+                ]
     except OperationalError as e:
         return {"error": "Database connection failed", "details": str(e)}
