@@ -49,6 +49,8 @@ def update_product_calories():
 
         calories_per_100_grams, usda_description = get_calories_from_usda(name)
 
+        source = "USDA"
+
         size_in_grams = size_to_grams(size_from_kroger) if size_from_kroger else None
 
         calories_per_package = None
@@ -83,8 +85,9 @@ def update_product_calories():
                 calories_per_package=%s,
                 calories_per_100_grams=%s,
                 calories_per_dollar=%s,
+                source=%s
                 WHERE id=%s
-        """, (usda_description, size_from_kroger, size_in_grams, calories_per_package, calories_per_100_grams, calories_per_dollar, prod_id))
+        """, (usda_description, size_from_kroger, size_in_grams, calories_per_package, calories_per_100_grams, calories_per_dollar, source, prod_id))
 
         
         

@@ -38,9 +38,9 @@ def save_products_to_db(products):
 
         cur.execute("""
             INSERT INTO products (
-                upc, name, brand, price, currency, size_from_kroger
+                upc, name, store, zipcode, brand, price, currency, size_from_kroger
             )
-            VALUES (%s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (upc) DO UPDATE SET
                 upc = EXCLUDED.upc,
                 name = EXCLUDED.name,
@@ -51,6 +51,8 @@ def save_products_to_db(products):
         """, (
             upc,
             name,
+            "KROGER",
+            "01400943",
             brand,
             price,
             currency,
@@ -66,5 +68,5 @@ def save_products_to_db(products):
 
 if __name__ == "__main__":
     token = get_access_token()
-    products = search_products("dried black beans", token)
+    products = search_products("dried garbanzo beans", token)
     save_products_to_db(products)

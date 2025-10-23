@@ -44,29 +44,33 @@ function App() {
           <tr>
             <th>Name</th>
             <th>Brand</th>
+            <th>Store</th>
+            <th>Zipcode</th>
             <th>USDA Description</th>
             <th>Size</th>
-            <th>Weight (g)</th>
+            <th>Size in grams</th>
             <th>Price ($)</th>
             <th>Calories / Package</th>
             <th>Calories / 100g</th>
             <th>Calories / $</th>
-            <th>AI Estimate?</th>
+            <th>Source for Calories</th>
           </tr>
         </thead>
         <tbody>
           {sortedProducts.map((p, idx) => (
             <tr key={idx}>
-              <td>{p.name}</td>
+              <td>{p.name || "—"}</td>
               <td>{p.brand || "—"}</td>
+              <td>{p.store || "—"}</td>
+              <td>{p.zipcode || "—"}</td>
               <td>{p.usda_description || "—"}</td>
               <td>{p.size_from_kroger || "—"}</td>
               <td>{p.size_in_grams?.toFixed(0) || "N/A"}</td>
               <td>{p.price?.toFixed(2) || "N/A"}</td>
               <td>{p.calories_per_package?.toFixed(0) || "N/A"}</td>
-              <td>{p.calories_per_100g?.toFixed(0) || "N/A"}</td>
+              <td>{p.calories_per_100_grams?.toFixed(0) || "N/A"}</td>
               <td>{p.calories_per_dollar?.toFixed(0) || "N/A"}</td>
-              <td>{p.ai_estimate ? "✅ Yes" : "❌ No"}</td>
+              <td>{p.source || "—"}</td>
             </tr>
           ))}
         </tbody>
