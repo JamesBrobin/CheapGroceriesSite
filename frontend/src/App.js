@@ -44,6 +44,7 @@ function App() {
           <tr>
             <th>Name</th>
             <th>Brand</th>
+            <th>USDA Description</th>
             <th>Size</th>
             <th>Weight (g)</th>
             <th>Price ($)</th>
