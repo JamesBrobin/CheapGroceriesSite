@@ -23,7 +23,7 @@ def save_products_to_db(products):
 
     for item in products["data"]:
         name = item["description"]
-        brand = item["brand"]
+        brand = item.get("brand") or "Unknown"
         upc = item["upc"]
         price_data = item.get("items", [{}])[0].get("price", {})
         price = price_data.get("regular")

@@ -13,7 +13,14 @@ DB_HOST = os.getenv("DB_HOST")
 
 def size_to_grams(size_str):
     size_str = size_str.lower().strip()
-    if "oz" in size_str:
+    if "fl oz" in size_str or "fl" in size_str:
+        #number = float(size_str.replace("fl oz", "").strip())
+        #return number * 29.5735  # approximate conversion for water-like density
+        return 0
+    elif "each" in size_str or "ea" in size_str or "ct" in size_str or "pk" in size_str:
+        #return 100  # assume average item weight of 100g
+        return 0
+    elif "oz" in size_str:
         number = float(size_str.replace("oz", "").strip())
         return number * 28.3495
     elif "lb" in size_str:
